@@ -1,0 +1,200 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package hotelreservationsystem;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+
+/**
+ *
+ * @author mikae
+ */
+public class ReservationTable extends javax.swing.JFrame {
+
+    public JTable tblReservation;
+
+    /**
+     * Creates new form ReservationTable
+     *
+     */
+    public ReservationTable() {
+        initComponents2();
+        fetchAndDisplayUserData();
+    }
+
+    public ReservationTable(String userID) {
+        initComponents2();
+        fetchAndDisplayUserData(userID);
+    }
+
+    private void initComponents2() {
+        // Creates a panel to hold the JTable
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        tblReservation = new JTable();
+        tablePanel.add(new JScrollPane(tblReservation), BorderLayout.CENTER);
+        add(tablePanel, BorderLayout.CENTER);
+
+        // Creates and add the Exit button
+        JButton exitButton = new JButton("Exit");
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose(); // Closes the current frame
+                new StaffHomePage().setVisible(true); // Shows the StaffHomePage
+            }
+        });
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Left-aligned button
+        buttonPanel.add(exitButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        setTitle("Reservation Table");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+    }
+
+    private void fetchAndDisplayUserData() {
+        // Defines MS Access database URL
+        String url = "jdbc:ucanaccess://HotelReservation.accdb";
+
+        try (Connection connection = DriverManager.getConnection(url);
+                Statement statement = connection.createStatement()) {
+
+            String query = "SELECT * FROM tblReservation";
+            ResultSet resultSet = statement.executeQuery(query);
+
+            // Creates a DefaultTableModel to hold the data
+            DefaultTableModel model = new DefaultTableModel();
+            tblReservation.setModel(model);
+
+            // Adds column names to the table model
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                model.addColumn(metaData.getColumnLabel(i));
+            }
+
+            // Adds rows from the ResultSet to the table model
+            while (resultSet.next()) {
+                Object[] rowData = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    rowData[i - 1] = resultSet.getObject(i);
+                }
+                model.addRow(rowData);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("COULD NOT FETCH AND DISPLAY USER DATA");
+        }
+    }
+
+    private void fetchAndDisplayUserData(String userID) {
+        // Defines the MS Access database URL
+        String url = "jdbc:ucanaccess://HotelReservation.accdb";
+
+        try (Connection connection = DriverManager.getConnection(url);
+                PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tblReservation WHERE UserID = ?")) {
+            preparedStatement.setString(1, userID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // Creates a DefaultTableModel to hold the data
+            DefaultTableModel model = new DefaultTableModel();
+            tblReservation.setModel(model);
+
+            // Adds column names to the table model
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                model.addColumn(metaData.getColumnLabel(i));
+            }
+
+            // Adds rows from the ResultSet to the table model
+            while (resultSet.next()) {
+                Object[] rowData = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    rowData[i - 1] = resultSet.getObject(i);
+                }
+                model.addRow(rowData); // Adds the fetched data to the table model
+            }
+
+        } catch (SQLException e) {
+            System.out.println("COULD NOT FECTH AND DISPLAY USER DATA");
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ReservationTable.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ReservationTable.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ReservationTable.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ReservationTable.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ReservationTable().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // End of variables declaration//GEN-END:variables
+}
